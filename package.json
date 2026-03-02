@@ -1,0 +1,29 @@
+{
+  "name": "create-drupal-camp-schedule",
+  "version": "1.0.0",
+  "description": "Scaffold a config-driven conference schedule app from the drupal-camp-schedule template",
+  "author": "Bison Digital",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "create-drupal-camp-schedule": "./src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bison-digital/create-drupal-camp-schedule.git"
+  },
+  "keywords": [
+    "drupal",
+    "conference",
+    "schedule",
+    "scaffold",
+    "create"
+  ],
+  "files": [
+    "src"
+  ],
+  "dependencies": {
+    "@clack/prompts": "^0.11.0",
+    "giget": "^2.0.0"
+  }
+}
