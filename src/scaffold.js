@@ -9,7 +9,6 @@ import { execSync } from "node:child_process";
  * @param {string} answers.name
  * @param {string} answers.shortName
  * @param {Array<{date: string, label: string}>} answers.days
- * @param {object} answers.colors
  * @param {string} answers.footerText
  * @param {string} answers.footerUrl
  * @param {boolean} answers.installDeps
@@ -31,7 +30,7 @@ export async function scaffold(answers) {
 
   const storageKey = `${slug}-favourites`;
 
-  // Build config.ts content
+  // Build config.ts — uses template default colors, user customises later
   const daysArray = answers.days
     .map((d) => `    { date: "${d.date}", label: "${d.label}" },`)
     .join("\n");
@@ -48,13 +47,13 @@ export const config: ConferenceConfig = {
     footerUrl: "${answers.footerUrl}",
   },
   colors: {
-    brandDark: "${answers.colors.brandDark}",
-    brandDarkAlt: "${answers.colors.brandDarkAlt}",
-    brandAccent: "${answers.colors.brandAccent}",
-    brandLight: "${answers.colors.brandLight}",
-    brandMid: "${answers.colors.brandMid}",
-    brandGradientEnd: "${answers.colors.brandGradientEnd}",
-    themeColor: "${answers.colors.themeColor}",
+    brandDark: "#1e293b",
+    brandDarkAlt: "#1a2332",
+    brandAccent: "#f59e0b",
+    brandLight: "#38bdf8",
+    brandMid: "#3b82f6",
+    brandGradientEnd: "#2563eb",
+    themeColor: "#1e293b",
   },
   days: [
 ${daysArray}
@@ -65,33 +64,6 @@ ${daysArray}
 `;
 
   writeFileSync(resolve(targetDir, "src/config.ts"), configContent);
-
-  // Update index.css @theme block
-  const cssPath = resolve(targetDir, "src/index.css");
-  let css = readFileSync(cssPath, "utf-8");
-  css = css
-    .replace(/--color-brand-dark:\s*#[0-9a-fA-F]+/, `--color-brand-dark: ${answers.colors.brandDark}`)
-    .replace(/--color-brand-dark-alt:\s*#[0-9a-fA-F]+/, `--color-brand-dark-alt: ${answers.colors.brandDarkAlt}`)
-    .replace(/--color-brand-accent:\s*#[0-9a-fA-F]+/, `--color-brand-accent: ${answers.colors.brandAccent}`)
-    .replace(/--color-brand-light:\s*#[0-9a-fA-F]+/, `--color-brand-light: ${answers.colors.brandLight}`)
-    .replace(/--color-brand-mid:\s*#[0-9a-fA-F]+/, `--color-brand-mid: ${answers.colors.brandMid}`)
-    .replace(/--color-brand-gradient-end:\s*#[0-9a-fA-F]+/, `--color-brand-gradient-end: ${answers.colors.brandGradientEnd}`);
-  writeFileSync(cssPath, css);
-
-  // Update index.html theme-color
-  const htmlPath = resolve(targetDir, "index.html");
-  let html = readFileSync(htmlPath, "utf-8");
-  html = html.replace(
-    /content="#[0-9a-fA-F]+"(\s*\/>.*theme-color|.*name="theme-color")/s,
-    `content="${answers.colors.themeColor}"$1`,
-  );
-  // Simpler approach: just replace the theme-color meta
-  html = readFileSync(htmlPath, "utf-8");
-  html = html.replace(
-    /<meta name="theme-color" content="[^"]*"/,
-    `<meta name="theme-color" content="${answers.colors.themeColor}"`,
-  );
-  writeFileSync(htmlPath, html);
 
   // Update package.json name
   const pkgPath = resolve(targetDir, "package.json");
